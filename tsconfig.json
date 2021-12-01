@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "allowJs": false,
+    "module": "commonjs",
+    "newLine": "LF",
+    "sourceMap": true,
+    "incremental": true,
+    "target": "es6",
+    "lib": ["esnext", "dom"],
+    "strict": true
+  }
+}
