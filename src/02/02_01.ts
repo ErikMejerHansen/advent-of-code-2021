@@ -48,6 +48,6 @@ export const calculatePositionProduct = (commands: string): number => {
   return x * y
 }
 
-const commands = fs.readFileSync('./src/02/data/partOne.txt').toString()
+const commands = fs.readFileSync('./src/02/data/commands.txt').toString()
 const positionProduct = calculatePositionProduct(commands)
 console.log('Prodduct of position:', positionProduct)
