@@ -27,4 +27,4 @@ export const calculatePositionProduct = (commands: string): number => {
 
 const commands = fs.readFileSync('./src/02/data/commands.txt').toString()
 const positionProduct = calculatePositionProduct(commands)
-console.log('Prodduct of position:', positionProduct)
+console.log('Product of position:', positionProduct)
