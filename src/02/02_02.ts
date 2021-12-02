@@ -1,11 +1,6 @@
 import * as fs from 'fs'
-import { Command, parseCommand } from './02_01'
-
-interface Attitude {
-  x: number
-  y: number
-  aim: number
-}
+import { parseCommand } from './command_parser'
+import { Attitude, Command } from './models'
 
 export const calculatePosition = (commands: Command[], initialAttitude = { x: 0, y: 0, aim: 0 }): Attitude => {
   const reducer = (previousAttitude: Attitude, currentCommand: Command): Attitude => {

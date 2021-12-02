@@ -1,17 +1,18 @@
 import * as part1 from '../02_01'
 import * as part2 from '../02_02'
+import { parseCommand } from '../command_parser'
 
 describe('Dec 2', () => {
   const sampleData = 'forward 5\ndown 5\nforward 8\nup 3\ndown 8\nforward 2'
   describe('parsing commands', () => {
     it('can parse "forward" commands', () => {
-      expect(part1.parseCommand('forward 1')).toStrictEqual({ direction: 'forward', amount: 1 })
+      expect(parseCommand('forward 1')).toStrictEqual({ direction: 'forward', amount: 1 })
     })
     it('can parse "down" commands', () => {
-      expect(part1.parseCommand('down 4')).toStrictEqual({ direction: 'down', amount: 4 })
+      expect(parseCommand('down 4')).toStrictEqual({ direction: 'down', amount: 4 })
     })
     it('can parse "up" commands', () => {
-      expect(part1.parseCommand('up 42')).toStrictEqual({ direction: 'up', amount: 42 })
+      expect(parseCommand('up 42')).toStrictEqual({ direction: 'up', amount: 42 })
     })
   })
   describe('Part 1', () => {
