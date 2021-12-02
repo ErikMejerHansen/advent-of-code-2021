@@ -1,4 +1,5 @@
 import * as fs from 'fs'
+
 const parseData = (fileName: string) => {
   const buffer = fs.readFileSync(fileName)
   return buffer
