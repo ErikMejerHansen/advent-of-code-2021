@@ -123,11 +123,43 @@ export const calculateGameScore = (data: string): number => {
   }
 
   if (winningPlates.length > 1) {
-    throw Error(`Found more than one winning plates ${winningPlates}`)
+    throw Error(`Found more than one winning plate ${winningPlates}`)
   }
 
   return calculatePlateScore(winningNumber, winningPlates[0])
 }
 
+/**
+ * Calculates the bingo score for the last bingo plate in a game
+ */
+export const calculateLoosingGameScore = (data: string): number => {
+  const draws = parseDraws(data)
+  let plates = parseBingoPlates(data)
+
+  let loosingPlates: BingoPlate[] = []
+  let winningNumber: number = -1
+
+  while (winningNumber === -1) {
+    const draw = draws.shift()!
+    plates.forEach(plate => markPlate(draw, plate))
+    // Find winning plates
+    const winningPlates = checkForBingo(plates)
+    // Remove winning plates from candidate list
+    plates = plates.filter(plate => !winningPlates.includes(plate))
+
+    if (plates.length === 1) {
+      // We have just one plate left. That'll be our loosing plate.
+      loosingPlates.push(plates[0])
+    }
+    if (plates.length === 0) {
+      // And we now have the winning number for the last plate
+      winningNumber = draw
+    }
+  }
+
+  return calculatePlateScore(winningNumber, loosingPlates[0])
+}
+
 const data = fs.readFileSync('./src/04/data/bingo_game.txt').toString()
 console.log('The winning score is:', calculateGameScore(data))
+console.log('The loosing score is:', calculateLoosingGameScore(data))
