@@ -24,6 +24,44 @@ export const parseLines = (data: string): Line[] => data.split('\n').map(parseLi
 
 const COLUM_COUNT = 1000
 
+const markYIncreasingDiagonal = ({ start, end }: Line, ventMap: number[]) => {
+  let currentX = start.x
+  let currentY = start.y
+  while (currentX <= end.x && currentY <= end.y) {
+    const cellIndex = currentX + currentY * COLUM_COUNT
+    ventMap[cellIndex] = ventMap[cellIndex] + 1
+    currentX++
+    currentY++
+  }
+}
+
+const markYDecreasingDiagonal = ({ start, end }: Line, ventMap: number[]) => {
+  let currentX = start.x
+  let currentY = start.y
+  while (currentX <= end.x && currentY >= end.y) {
+    const cellIndex = currentX + currentY * COLUM_COUNT
+    ventMap[cellIndex] = ventMap[cellIndex] + 1
+    currentX++
+    currentY--
+  }
+}
+const markDiagonal = (line: Line, ventMap: number[]) => {
+  // Find left-most start - ie. the point with the lowest x value
+  let leftMostStart = line.start.x < line.end.x ? line.start : line.end
+  // And find the right-most end
+  let rightMostEnd = line.start.x > line.end.x ? line.start : line.end
+
+  // Always starting with the left-most point means we only have to handle two diagonal directions:
+  // left-to-right with increasing y-values
+  // left-to-right with decreasing y-values
+  let increasingYValues = leftMostStart.y < rightMostEnd.y
+  if (increasingYValues) {
+    markYIncreasingDiagonal({ start: leftMostStart, end: rightMostEnd }, ventMap)
+  } else {
+    markYDecreasingDiagonal({ start: leftMostStart, end: rightMostEnd }, ventMap)
+  }
+}
+
 const markHorizontal = ({ start, end }: Line, ventMap: number[]) => {
   const min = Math.min(start.x, end.x) // Lines are not necessarily given in a left to right direction
   const max = Math.max(start.x, end.x)
@@ -43,35 +81,6 @@ const markVertical = ({ start, end }: Line, ventMap: number[]) => {
     ventMap[cellIndex] = ventMap[cellIndex] + 1
   }
 }
-
-const markDiagonal = (line: Line, ventMap: number[]) => {
-  // Find left-most start - ie the point with the lowest x value
-  let leftMostStart = line.start.x < line.end.x ? line.start : line.end
-  // And find the right-most end
-  let rightMostEnd = line.start.x > line.end.x ? line.start : line.end
-
-  let pointingDown = leftMostStart.y < rightMostEnd.y
-  if (pointingDown) {
-    let currentX = leftMostStart.x
-    let currentY = leftMostStart.y
-    while (currentX <= rightMostEnd.x && currentY <= rightMostEnd.y) {
-      const cellIndex = currentX + currentY * COLUM_COUNT
-      ventMap[cellIndex] = ventMap[cellIndex] + 1
-      currentX++
-      currentY++
-    }
-  } else {
-    let currentX = leftMostStart.x
-    let currentY = leftMostStart.y
-    while (currentX <= rightMostEnd.x && currentY >= rightMostEnd.y) {
-      const cellIndex = currentX + currentY * COLUM_COUNT
-      ventMap[cellIndex] = ventMap[cellIndex] + 1
-      currentX++
-      currentY--
-    }
-  }
-}
-
 export const countOverlaps = (lines: Line[], ignoreDiagonals = false): number => {
   const map = new Array<number>(COLUM_COUNT * COLUM_COUNT)
   map.fill(0)
@@ -93,5 +102,6 @@ export const countOverlaps = (lines: Line[], ignoreDiagonals = false): number =>
 
 const data = fs.readFileSync('./src/05/data/vents.txt').toString()
 const lines = parseLines(data)
+
 console.log('The number of overlaps, ignoring diagonals, is:', countOverlaps(lines, true))
 console.log('The number of overlaps is:', countOverlaps(lines))
