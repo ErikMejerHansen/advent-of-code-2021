@@ -1,4 +1,4 @@
-import { countOverlaps, Line, parseLines } from '../05_01'
+import { countOverlaps, Line, parseLines } from '../05'
 
 describe('Dec 5', () => {
   const sampleData =
@@ -22,7 +22,7 @@ describe('Dec 5', () => {
     it('can count the correct number of overlaps for the sample data', () => {
       const lines = parseLines(sampleData)
 
-      expect(countOverlaps(lines)).toBe(5)
+      expect(countOverlaps(lines, true)).toBe(5)
     })
   })
   describe('Part 2', () => {
