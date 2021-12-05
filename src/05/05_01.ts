@@ -49,6 +49,33 @@ export const countOverlaps = (lines: Line[]): number => {
         const cellIndex = i + y1 * COLUM_COUNT
         map[cellIndex] = map[cellIndex] + 1
       }
+    } else {
+      // Find left-most start - ie the point with the lowest x value
+      let leftMostStart = line.start.x < line.end.x ? line.start : line.end
+      // And find the right-most end
+      let rightMostEnd = line.start.x > line.end.x ? line.start : line.end
+
+      let pointingDown = leftMostStart.y < rightMostEnd.y
+      if (pointingDown) {
+        let currentX = leftMostStart.x
+        let currentY = leftMostStart.y
+        while (currentX <= rightMostEnd.x && currentY <= rightMostEnd.y) {
+          const cellIndex = currentX + currentY * COLUM_COUNT
+          map[cellIndex] = map[cellIndex] + 1
+          currentX++
+          currentY++
+        }
+      } else {
+        let currentX = leftMostStart.x
+        let currentY = leftMostStart.y
+        while (currentX <= rightMostEnd.x && currentY >= rightMostEnd.y) {
+          // console.log('marking: x:', currentX, ', y:', currentY)
+          const cellIndex = currentX + currentY * COLUM_COUNT
+          map[cellIndex] = map[cellIndex] + 1
+          currentX++
+          currentY--
+        }
+      }
     }
   })
 
