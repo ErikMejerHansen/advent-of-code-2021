@@ -10,7 +10,12 @@ module.exports = {
     ecmaVersion: 13,
   },
   plugins: ['@typescript-eslint', 'jest'],
-  rules: {},
+  rules: {
+    'no-unused-vars': [
+      'error',
+      { vars: 'all', args: 'after-used', ignoreRestSiblings: false, argsIgnorePattern: '^_' },
+    ],
+  },
   overrides: [
     {
       files: ['src/**/*.test.ts'],
