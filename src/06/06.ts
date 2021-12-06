@@ -3,20 +3,31 @@ import * as fs from 'fs'
 export const parseAges = (data: string): number[] => data.split(',').map(x => parseInt(x, 10))
 
 export const simulate = (ages: number[], daysToSimulate: number): number[] => {
-  // Initial state: 3,4,3,1,2
-  // After  1 day:  2,3,2,0,1
-  // After  2 days: 1,2,1,6,0,8
+  // Build initial histogram of ages
+  const agesHistogram = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  ages.forEach(age => (agesHistogram[age] = agesHistogram[age] + 1))
+
+  console.log('Initial ages: ', agesHistogram)
+
   for (let day = 0; day < daysToSimulate; day++) {
-    // Decrease everything
-    ages = ages.map(x => x - 1)
-    // Check for -1s, push 8's
-    ages.filter(x => x === -1).forEach(_ => ages.push(8))
-    // Reset -1s to 6
-    ages = ages.map(x => (x === -1 ? 6 : x))
+    const newBorns = agesHistogram[0]
+    agesHistogram[0] = agesHistogram[1]
+    agesHistogram[1] = agesHistogram[2]
+    agesHistogram[2] = agesHistogram[3]
+    agesHistogram[3] = agesHistogram[4]
+    agesHistogram[4] = agesHistogram[5]
+    agesHistogram[5] = agesHistogram[6]
+    agesHistogram[6] = agesHistogram[7]
+    agesHistogram[7] = agesHistogram[8]
+    agesHistogram[8] = newBorns
+    agesHistogram[6] = agesHistogram[6] + newBorns
   }
 
-  return ages
+  return agesHistogram
 }
 
+export const schoolSize = (ages: number[]): number => ages.reduce((sum, ageCount) => sum + ageCount, 0)
+
 const data = fs.readFileSync('./src/06/data/ages.txt').toString()
-console.log('The size of the lanternfish school is:', simulate(parseAges(data), 80).length)
+console.log('The size of the lanternfish school after 80 days is:', schoolSize(simulate(parseAges(data), 80)))
+console.log('The size of the lanternfish school after 256 days is:', schoolSize(simulate(parseAges(data), 256)))
