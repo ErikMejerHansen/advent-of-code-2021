@@ -1,20 +1,22 @@
 #!/bin/bash
+DAY=$(date +'%d') 
+echo $DAY
 
-echo "Creating files for" $1
+echo "Creating files for" $DAY
 
-mkdir src/$1
-mkdir src/$1/__tests__
-mkdir src/$1/data
+mkdir src/$DAY
+mkdir src/$DAY/__tests__
+mkdir src/$DAY/data
 
-touch src/$1/$1.ts  
+touch src/$DAY/$DAY.ts  
 echo "import * as fs from 'fs'
 
-const data = fs.readFileSync('./src/${1}/data/data.txt').toString()
-" > src/$1/$1.ts
+const data = fs.readFileSync('./src/${DAY}/data/data.txt').toString()
+" > src/$DAY/$DAY.ts
 
 
-touch src/$1/__tests__/$1.test.ts  
-echo "describe('Dec ${1}', ()=> {
+touch src/$DAY/__tests__/$DAY.test.ts  
+echo "describe('Dec ${DAY}', ()=> {
     describe('Part 1', ()=> {
         //
     })
@@ -22,6 +24,6 @@ echo "describe('Dec ${1}', ()=> {
     describe('Part 2', ()=>{
         //
     })
-})" > src/$1/__tests__/$1.test.ts
+})" > src/$DAY/__tests__/$DAY.test.ts
 
-touch src/$1/data/data.txt
+touch src/$DAY/data/data.txt
