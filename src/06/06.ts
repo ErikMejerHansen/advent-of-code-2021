@@ -7,8 +7,6 @@ export const simulate = (ages: number[], daysToSimulate: number): number[] => {
   const agesHistogram = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
   ages.forEach(age => (agesHistogram[age] = agesHistogram[age] + 1))
 
-  console.log('Initial ages: ', agesHistogram)
-
   for (let day = 0; day < daysToSimulate; day++) {
     const newBorns = agesHistogram[0]
     agesHistogram[0] = agesHistogram[1]
