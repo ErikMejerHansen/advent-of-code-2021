@@ -23,3 +23,5 @@ echo "describe('Dec ${1}', ()=> {
         //
     })
 })" > src/$1/__tests__/$1.test.ts
+
+touch src/$1/data/data.txt
