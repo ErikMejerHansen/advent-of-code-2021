@@ -52,7 +52,7 @@ describe('Dec 08', () => {
       const lines: SevenSegmentLine[] = parseSevenSegmentData(
         'acedgfb cdfbe gcdfa fbcad dab cefabd cdfgeb eafb cagedb ab | fbcad fbcad fbcad fbcad'
       )
-      expect(decodeOutput(lines[0])).toBe(2222)
+      expect(decodeOutput(lines[0])).toBe(3333)
     })
 
     it('should decode 5 correctly', () => {
