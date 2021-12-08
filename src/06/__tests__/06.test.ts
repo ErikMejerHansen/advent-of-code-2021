@@ -43,9 +43,9 @@ describe('Dec 6', () => {
   describe('Part 2', () => {
     it('correctly simulates the sample data for 256 days', () => {
       let ages = parseAges(sampleData)
-      let day80 = simulate(ages, 80)
+      let day256 = simulate(ages, 256)
 
-      expect(day80).toHaveLength(26984457539)
+      expect(schoolSize(day256)).toBe(26984457539)
     })
   })
 })
