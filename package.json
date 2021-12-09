@@ -8,7 +8,9 @@
     "verify:prettier": "prettier \"src/**/*.ts\" --check",
     "verify:eslint": "eslint . --ext js,ts",
     "verify:test": "jest",
-    "verify": "yarn verify:prettier && yarn verify:eslint && yarn verify:test"
+    "verify": "yarn verify:prettier && yarn verify:eslint && yarn verify:test",
+    "today": "yarn exec ts-node src/$(date +'%d')/*.ts",
+    "today:start": "./scripts/prep_day.sh"
   },
   "devDependencies": {
     "@types/jest": "^27.0.3",
