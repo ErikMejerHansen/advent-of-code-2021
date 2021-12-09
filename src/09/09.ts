@@ -12,18 +12,10 @@ export const findLowPoints = (heightMap: number[][]): Coordinate[] => {
     const row = heightMap[rowIndex]
     for (let columnIndex = 0; columnIndex < row.length; columnIndex++) {
       const height = heightMap[rowIndex][columnIndex]
-      // check up
-      const smallerThanNeighborUp = rowIndex > 0 ? height < heightMap[rowIndex - 1][columnIndex] : true
-      // check down
-      const smallerThanNeighborDown =
-        rowIndex < heightMap.length - 1 ? height < heightMap[rowIndex + 1][columnIndex] : true
-      // check left
-      const smallerThanNeighborLeft = columnIndex > 0 ? height < heightMap[rowIndex][columnIndex - 1] : true
-      // check right
-      const smallerThanNeighborRight =
-        columnIndex < row.length - 1 ? height < heightMap[rowIndex][columnIndex + 1] : true
+      const neighbors = getNeighborCoordinates([rowIndex, columnIndex], heightMap)
+      const neighborsAreHigher = neighbors.every(coord => height < heightMap[coord[0]][coord[1]])
 
-      if (smallerThanNeighborUp && smallerThanNeighborDown && smallerThanNeighborLeft && smallerThanNeighborRight) {
+      if (neighborsAreHigher) {
         lowPoints.push([rowIndex, columnIndex])
       }
     }
@@ -32,7 +24,7 @@ export const findLowPoints = (heightMap: number[][]): Coordinate[] => {
   return lowPoints as Coordinate[]
 }
 
-const getNeighborsCoordinates = ([x, y]: Coordinate, array: number[][]): Coordinate[] => {
+const getNeighborCoordinates = ([x, y]: Coordinate, array: number[][]): Coordinate[] => {
   const neighbors: [number, number][] = new Array<[number, number]>()
 
   // add upwards neighbor
@@ -66,7 +58,7 @@ export const calculateRiskScore = (lowPoints: Coordinate[], heightMap: number[][
 const findBasinSize = (coordinate: Coordinate, heightMap: number[][]): number => {
   const basin = new Set<string>()
   // Find the first round of neighbors
-  const neighbors = getNeighborsCoordinates(coordinate, heightMap)
+  const neighbors = getNeighborCoordinates(coordinate, heightMap)
   // Filter out any neighbor with a height of 9
   let nextNeighbors = filterCoordinatesByValue(neighbors, heightMap, 9)
 
@@ -76,7 +68,7 @@ const findBasinSize = (coordinate: Coordinate, heightMap: number[][]): number =>
     nextNeighbors.forEach(coordinate => basin.add(`${coordinate[0]},${coordinate[1]}`))
 
     // Get the neighbors of the cells we're currently looking at
-    const nextCandidates = nextNeighbors.flatMap(coordinate => getNeighborsCoordinates(coordinate, heightMap))
+    const nextCandidates = nextNeighbors.flatMap(coordinate => getNeighborCoordinates(coordinate, heightMap))
 
     // Filter out the ones we already know
     const newCandidates = nextCandidates.filter(coordinate => !basin.has(`${coordinate[0]},${coordinate[1]}`))
