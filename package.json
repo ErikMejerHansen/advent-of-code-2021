@@ -10,7 +10,8 @@
     "verify:test": "jest",
     "verify": "yarn verify:prettier && yarn verify:eslint && yarn verify:test",
     "today": "yarn exec ts-node src/$(date +'%d')/*.ts",
-    "today:start": "./scripts/prep_day.sh"
+    "today:start": "./scripts/prep_day.sh",
+    "today:test": "jest src/$(date +'%d')/__tests__/"
   },
   "devDependencies": {
     "@types/jest": "^27.0.3",
