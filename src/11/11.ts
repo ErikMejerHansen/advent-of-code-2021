@@ -113,8 +113,6 @@ export const step = (octopi: number[][]): StepResult => {
   return { flashes, octopi: zeroed }
 }
 
-const octopiString = (octopi: number[][]): string => octopi.map(row => row.join('')).join('\n')
-
 /**
  * Steps trough steps and returns the number of flashes
  * @param steps The number of steps to perform
