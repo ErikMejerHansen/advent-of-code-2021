@@ -129,8 +129,21 @@ export const performSteps = (steps: number, octopiEnergyLevels: number[][]): Ste
   return { octopi: octopiEnergyLevels, flashes: totalFlashes }
 }
 
+const findFirstSynchronizedFlash = (octopi: number[][]): number => {
+  let lastResult = step(octopi)
+  let stepsTaken = 1
+  do {
+    const stepResult = step(lastResult.octopi)
+    lastResult = stepResult
+    stepsTaken++
+  } while (lastResult.flashes !== octopi.length ** 2)
+
+  return stepsTaken
+}
+
 const data = fs.readFileSync('./src/11/data/data.txt').toString()
 const parsed = parseData(data)
 
 const after100Steps = performSteps(100, parsed)
 console.log('Flashes after 100 steps:', after100Steps.flashes)
+console.log('First synchronized flash', findFirstSynchronizedFlash(parsed))

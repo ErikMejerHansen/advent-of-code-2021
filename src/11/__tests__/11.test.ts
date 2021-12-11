@@ -73,8 +73,4 @@ describe('Dec 11', () => {
       expect(performSteps(stepCount, energyLevels).flashes).toBe(numberOfFlashes)
     })
   })
-
-  describe('Part 2', () => {
-    //
-  })
 })
