@@ -1,14 +1,12 @@
 import * as fs from 'fs'
 export enum CaveSize {
-  Large,
   Small,
+  Large,
 }
 
 export interface Cave {
   name: string
   size: CaveSize
-  isStart: boolean
-  isEnd: boolean
 }
 
 export interface Tunnel {
@@ -32,6 +30,8 @@ interface Path {
    * A ExitPath is complete when the path starts at the start cave and ends at the end cave
    */
   isComplete: boolean
+
+  duplicateTaken: boolean
 }
 
 const parseCave = (caveName: string): Cave => {
@@ -41,22 +41,16 @@ const parseCave = (caveName: string): Cave => {
     return {
       name: caveName,
       size: CaveSize.Small,
-      isStart: true,
-      isEnd: false,
     }
   } else if (caveName === 'end') {
     return {
       name: caveName,
       size: CaveSize.Small,
-      isStart: false,
-      isEnd: true,
     }
   } else {
     return {
       name: caveName,
       size: bigCaveRegex.test(caveName) ? CaveSize.Large : CaveSize.Small,
-      isStart: false,
-      isEnd: false,
     }
   }
 }
@@ -100,45 +94,62 @@ export const parseCaveSystem = (data: string): CaveSystem => {
 
 const pathContains = ({ path }: Path, cave: Cave): boolean => path.filter(it => it.name === cave.name).length > 0
 
-const findExits = (cave: Cave, pathTaken: Path, caveSystem: CaveSystem): Path[] => {
-  console.log('In:', cave.name, 'Via:', stringifyPath(pathTaken))
+const clonePath = (original: Path, overrides?: Partial<Path>): Path => {
+  return { ...original, path: [...original.path], ...overrides }
+}
+
+const findExits = (cave: Cave, pathTaken: Path, caveSystem: CaveSystem, allowDuplicate: boolean): Path[] => {
+  const extendedPath = clonePath(pathTaken, { path: [...pathTaken.path, cave] })
   if (cave.name === 'end') {
-    console.log('end')
-    // We have reached the end. No need to proceed
-    return [{ ...pathTaken, path: [...pathTaken.path], isComplete: true }]
+    // We're at the end. Finish path
+    const clone = clonePath(extendedPath, { isComplete: true })
+    return [clone]
   }
 
   if (cave.size === CaveSize.Small && pathContains(pathTaken, cave)) {
-    console.log('dead end')
-    // We're at a dead end because we have visited this small cave before
-    return [{ ...pathTaken, path: [...pathTaken.path], isDeadEnd: true }]
+    // console.log('Second time small:', cave.name)
+    // We've hit a small cave for the second time
+    if (cave.name === 'start') {
+      // This is the second time we see the start cave. This is a dead end
+      const clone = clonePath(extendedPath, { isDeadEnd: true })
+      return [clone]
+    } else if (allowDuplicate && extendedPath.duplicateTaken) {
+      // We allow traversing a small cave twice, but have already done so. This is a dead end
+      const clone = clonePath(extendedPath, { isDeadEnd: true })
+      return [clone]
+    } else if (allowDuplicate && !extendedPath.duplicateTaken) {
+      // We're at this small cave for the second time. Flip the duplicateTaken flag and proceed
+      extendedPath.duplicateTaken = true
+    } else {
+      // We don't allow traversing a small cave twice. This is a dead end.
+      const clone = clonePath(extendedPath, { isDeadEnd: true })
+      return [clone]
+    }
   }
 
-  // Avoid mutating input
-  const workingPath = [...pathTaken.path]
-  // We're not finished or at a dead end. Add this cave to the path
-  //   workingPath.push(cave)
-
   const tunnels = caveSystem.tunnels.get(cave.name)!
-  const nextSteps = tunnels.flatMap(t => {
-    return findExits(t.to, { ...pathTaken, path: [...workingPath, cave] }, caveSystem)
+  let paths: Path[] = []
+  tunnels.forEach(tunnel => {
+    const newPaths = findExits(tunnel.to, extendedPath, caveSystem, allowDuplicate)
+    paths = [...paths, ...newPaths]
   })
 
-  return nextSteps
+  return paths
 }
 
-const stringifyPath = (path: Path): string => path.path.map(({ name }) => name).join('->')
-
-export const findPaths = (caveSystem: CaveSystem): Path[] => {
+export const findPaths = (caveSystem: CaveSystem, allowDuplicate = false): Path[] => {
   const start = caveSystem.caves.filter(cave => cave.name === 'start')[0]
-  const paths = findExits(start, { path: [], isDeadEnd: false, isComplete: false }, caveSystem)
-  const legalPaths = paths.filter(({ isDeadEnd }) => !isDeadEnd)
+  const paths = findExits(
+    start,
+    { path: [], isDeadEnd: false, isComplete: false, duplicateTaken: false },
+    caveSystem,
+    allowDuplicate
+  )
 
-  legalPaths.forEach(p => console.log('Path:', stringifyPath(p)))
-
-  return legalPaths
+  return paths.filter(p => !(p as Path).isDeadEnd)
 }
 
 const data = fs.readFileSync('./src/12/data/data.txt').toString()
 const parsed = parseCaveSystem(data)
-console.log('uf', findPaths(parsed).length)
+console.log('Number of paths:', findPaths(parsed).length)
+console.log('Number of paths - with duplicate allowed:', findPaths(parsed, true).length)
