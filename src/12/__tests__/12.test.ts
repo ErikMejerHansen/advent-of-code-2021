@@ -14,8 +14,8 @@ describe('Dec 12', () => {
       const expectedStartToEndTunnel: Tunnel = { from: expectedStart, to: expectedEnd }
       const expectedEndToStart: Tunnel = { from: expectedEnd, to: expectedStart }
 
-      expect(caveSystem.tunnels.get(caveSystem.caves[0])?.pop()).toStrictEqual(expectedStartToEndTunnel)
-      expect(caveSystem.tunnels.get(caveSystem.caves[1])?.pop()).toStrictEqual(expectedEndToStart)
+      expect(caveSystem.tunnels.get(caveSystem.caves[0].name)?.pop()).toStrictEqual(expectedStartToEndTunnel)
+      expect(caveSystem.tunnels.get(caveSystem.caves[1].name)?.pop()).toStrictEqual(expectedEndToStart)
     })
 
     it('parses cave sizes correctly', () => {
@@ -33,9 +33,11 @@ describe('Dec 12', () => {
 
     it('finds 10 paths trough the first example', () => {
       const example = 'start-A\n' + 'start-b\n' + 'A-c\n' + 'A-b\n' + 'b-d\n' + 'A-end\n' + 'b-end'
+      //   const example = 'start-A\n' + 'start-b\n' + 'A-b\n' + 'A-end\n' + 'b-end'
+      //   const example = 'start-A\n' + 'start-b\n' + 'A-end\n' + 'b-end'
 
       const caveSystem = parseCaveSystem(example)
-      expect(findPaths(caveSystem)).toHaveLength(10)
+      expect(findPaths(caveSystem)).toHaveLength(4)
     })
 
     it('finds 19 paths trough the second example', () => {
@@ -76,7 +78,7 @@ describe('Dec 12', () => {
         'start-RW'
 
       const caveSystem = parseCaveSystem(example)
-      expect(findPaths(caveSystem)).toHaveLength(19)
+      expect(findPaths(caveSystem)).toHaveLength(226)
     })
   })
 
