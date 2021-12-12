@@ -6,16 +6,16 @@ describe('Dec 12', () => {
       const cave = 'start-end'
       const caveSystem = parseCaveSystem(cave)
 
-      const expectedStart: Cave = { isStart: true, isEnd: false, size: CaveSize.Small }
-      const expectedEnd: Cave = { isStart: false, isEnd: true, size: CaveSize.Small }
+      const expectedStart: Cave = { name: 'start', isStart: true, isEnd: false, size: CaveSize.Small }
+      const expectedEnd: Cave = { name: 'end', isStart: false, isEnd: true, size: CaveSize.Small }
       expect(caveSystem.caves[0]).toStrictEqual(expectedStart)
       expect(caveSystem.caves[1]).toStrictEqual(expectedEnd)
 
       const expectedStartToEndTunnel: Tunnel = { from: expectedStart, to: expectedEnd }
       const expectedEndToStart: Tunnel = { from: expectedEnd, to: expectedStart }
 
-      expect(caveSystem.tunnels.get(caveSystem.caves[0])).toStrictEqual(expectedStartToEndTunnel)
-      expect(caveSystem.tunnels.get(caveSystem.caves[1])).toStrictEqual(expectedEndToStart)
+      expect(caveSystem.tunnels.get(caveSystem.caves[0])?.pop()).toStrictEqual(expectedStartToEndTunnel)
+      expect(caveSystem.tunnels.get(caveSystem.caves[1])?.pop()).toStrictEqual(expectedEndToStart)
     })
 
     it('parses cave sizes correctly', () => {
