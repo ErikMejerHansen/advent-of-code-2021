@@ -125,8 +125,4 @@ describe('Dec 13', () => {
       expect(foldedOnce.flat(1).filter(it => it)).toHaveLength(710)
     })
   })
-
-  describe('Part 2', () => {
-    //
-  })
 })

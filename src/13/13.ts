@@ -90,10 +90,31 @@ export const parseInstructions = (data: string): Instruction => {
   return { dots, folds }
 }
 
+const stringifyMatrix = <T>(matrix: Matrix<T>, dotMarker: T, printedDot: string, printedBlank: string): string => {
+  let out = ''
+  matrix.forEach(row => {
+    row.forEach(cell => {
+      out += cell === dotMarker ? printedDot : printedBlank
+    })
+    out += '\n'
+  })
+
+  return out
+}
+
+const foldInstructions = (instructions: Instruction) => {
+  const folded = instructions.folds.reduce((paper, currentFold) => {
+    return fold(currentFold, paper)
+  }, instructions.dots)
+  return stringifyMatrix(folded, true, '#', '.')
+}
+
 const data = fs.readFileSync('./src/13/data/data.txt').toString()
 
 const parsed = parseInstructions(data)
 const folded = fold(parsed.folds[0], parsed.dots)
-
 const points = folded.flat(1).filter(it => it).length
 console.log('Number of dots after first fold', points)
+
+console.log('The folded instructions look like this:')
+console.log(foldInstructions(parsed))
