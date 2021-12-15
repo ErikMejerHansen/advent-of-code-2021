@@ -107,7 +107,6 @@ const findExits = (cave: Cave, pathTaken: Path, caveSystem: CaveSystem, allowDup
   }
 
   if (cave.size === CaveSize.Small && pathContains(pathTaken, cave)) {
-    // console.log('Second time small:', cave.name)
     // We've hit a small cave for the second time
     if (cave.name === 'start') {
       // This is the second time we see the start cave. This is a dead end
