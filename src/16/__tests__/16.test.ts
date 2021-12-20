@@ -1,3 +1,4 @@
+import { buildStateMachine, Package, toBinaryRepresentation } from '../16'
 import { State, StateMachine } from '../state-machine'
 
 describe('Dec 16', () => {
@@ -94,9 +95,58 @@ describe('Dec 16', () => {
       expect(state).toStrictEqual({ nodesVisited: ['Start', 'A', 'B', 'End'] })
     })
   })
-  describe('Part 1', () => {})
+  describe('Part 1', () => {
+    it('can parse the version number of single package', () => {
+      const packageInput = 'EE00D40C823060'
+      const stateMachine = buildStateMachine()
+      const state = { packages: new Array<Package>(), input: toBinaryRepresentation(packageInput) }
+      stateMachine.run(state)
+      expect(state.packages[0].version).toBe(7)
+    })
 
-  describe('Part 2', () => {
-    //
+    it('can parse the type number of single package', () => {
+      const packageInput = 'EE00D40C823060'
+      const stateMachine = buildStateMachine()
+      const state = { packages: new Array<Package>(), input: toBinaryRepresentation(packageInput) }
+      stateMachine.run(state)
+      expect(state.packages[0].type).toBe(3)
+    })
+
+    it('can parse the value out of a literal package', () => {
+      const packageInput = 'D2FE28'
+      const stateMachine = buildStateMachine()
+      const state = { packages: new Array<Package>(), input: toBinaryRepresentation(packageInput) }
+      stateMachine.run(state)
+      expect(state.packages[0].value).toBe(2021)
+    })
+
+    it('can parse the value out of two consecutive literal packages', () => {
+      const packageInput = 'D2FE28D2FE28'
+      const stateMachine = buildStateMachine()
+      const state = { packages: new Array<Package>(), input: toBinaryRepresentation(packageInput) }
+      stateMachine.run(state)
+      expect(state.packages[0].value).toBe(2021)
+      expect(state.packages[1].value).toBe(2021)
+    })
+
+    it('can parse the length type of operator a operator package with length type 0', () => {
+      const packageInput = '38006F45291200'
+      const stateMachine = buildStateMachine()
+      const state = { packages: new Array<Package>(), input: toBinaryRepresentation(packageInput) }
+      stateMachine.run(state)
+
+      expect(state.packages[0].lengthType).toBe(0)
+    })
+
+    it('can parse the length type of operator a operator package with length type 1', () => {
+      const packageInput = 'EE00D40C823060'
+      const stateMachine = buildStateMachine()
+      const state = { packages: new Array<Package>(), input: toBinaryRepresentation(packageInput) }
+      stateMachine.run(state)
+
+      expect(state.packages[0].lengthType).toBe(1)
+    })
   })
+
+  describe('Part 2', () => {})
 })

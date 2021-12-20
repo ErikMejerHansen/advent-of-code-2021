@@ -1,3 +1,9 @@
+export type Next<CollectedState, Stimulus> = (updatedState: CollectedState, next: Stimulus) => void
+export type Action<CollectedState, Stimulus> = (
+  incomingState: CollectedState,
+  next: Next<CollectedState, Stimulus>
+) => void
+
 type Transitions<Stimulus, CollectedState> = Map<Stimulus, State<Stimulus, CollectedState>>
 
 /**
@@ -30,12 +36,6 @@ export class StateMachine<Stimulus, CollectedState> {
     }
   }
 }
-
-export type Next<CollectedState, Stimulus> = (updatedState: CollectedState, next: Stimulus) => void
-export type Action<CollectedState, Stimulus> = (
-  incomingState: CollectedState,
-  next: Next<CollectedState, Stimulus>
-) => void
 
 export class State<Stimulus, CollectedState> {
   private _action?: Action<CollectedState, Stimulus>
