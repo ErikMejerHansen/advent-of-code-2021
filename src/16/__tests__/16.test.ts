@@ -120,15 +120,6 @@ describe('Dec 16', () => {
       expect(state.packages[0].value).toBe(2021)
     })
 
-    it('can parse the value out of two consecutive literal packages', () => {
-      const packageInput = 'D2FE28D2FE28'
-      const stateMachine = buildStateMachine()
-      const state = { packages: new Array<Package>(), input: toBinaryRepresentation(packageInput) }
-      stateMachine.run(state)
-      expect(state.packages[0].value).toBe(2021)
-      expect(state.packages[1].value).toBe(2021)
-    })
-
     it('can parse the length type of operator a operator package with length type 0', () => {
       const packageInput = '38006F45291200'
       const stateMachine = buildStateMachine()
@@ -145,6 +136,15 @@ describe('Dec 16', () => {
       stateMachine.run(state)
 
       expect(state.packages[0].lengthType).toBe(1)
+    })
+
+    it('parses sub packages', () => {
+      const packageInput = '38006F45291200'
+      const stateMachine = buildStateMachine()
+      const state = { packages: new Array<Package>(), input: toBinaryRepresentation(packageInput) }
+      stateMachine.run(state)
+
+      expect(state.packages).toHaveLength(3)
     })
   })
 

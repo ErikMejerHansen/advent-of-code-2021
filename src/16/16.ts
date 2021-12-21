@@ -36,9 +36,10 @@ enum PackageParserStimulus {
 
 const versionState = new State<PackageParserStimulus, PackageParserState>()
 versionState.action = (incomingState, next) => {
-  if (incomingState.input.length === 0) {
+  if (incomingState.input.length === 0 || incomingState.input.every(it => it === '0')) {
     // No more input! We're done!
     next(incomingState, PackageParserStimulus.End)
+    return
   }
 
   // Take the three bits of the input and parse it as a number
@@ -47,8 +48,6 @@ versionState.action = (incomingState, next) => {
   // The version is the first 3 bits, shift them into position to get the version number
   const version = parseInt(versionRaw, 2)
   incomingState.packages.push({ version, type: -1 })
-
-  console.log('Version:', version)
 
   next(incomingState, PackageParserStimulus.Type)
 }
@@ -90,7 +89,6 @@ groupState.action = (incomingState, next) => {
 
   incomingState.groups?.push(groupValue)
 
-  console.log('Group', groupValue)
   if (isLastGroupMarker === '1') {
     next(incomingState, PackageParserStimulus.LiteralGroup)
   } else {
@@ -100,31 +98,44 @@ groupState.action = (incomingState, next) => {
 
 const lastGroupState = new State<PackageParserStimulus, PackageParserState>()
 lastGroupState.action = (incomingState, next) => {
-  // The last group stops at a byte boundary, but we might have some dangle 0's we need to get rid of
-  incomingState.input.splice(0, incomingState.input.length % 8)
-
   incomingState.packages[incomingState.packages.length - 1].value = parseInt(incomingState.groups!.join(''), 2)
-  console.log('Group end: Literal value:', incomingState.packages[incomingState.packages.length - 1].value)
 
   next(incomingState, PackageParserStimulus.Version)
 }
 
 const lengthTypeState = new State<PackageParserStimulus, PackageParserState>()
 lengthTypeState.action = (incomingState, next) => {
-  console.log('Length type')
   const lengthTypeRaw = incomingState.input.shift()!
   const lengthType = parseInt(lengthTypeRaw, 2)
   incomingState.packages[incomingState.packages.length - 1].lengthType = lengthType
+
+  if (lengthType === 0) {
+    next(incomingState, PackageParserStimulus.SubPacketLength15)
+  } else {
+    next(incomingState, PackageParserStimulus.SubPacketLength11)
+  }
 }
 
 const subPacketLength11State = new State<PackageParserStimulus, PackageParserState>()
-subPacketLength11State.action = (incomingState, _next) => {}
+subPacketLength11State.action = (incomingState, next) => {
+  // For now just drop the 11 bits and go back to start
+  incomingState.input.splice(0, 11)
+
+  next(incomingState, PackageParserStimulus.Version)
+}
 
 const subPacketLength15State = new State<PackageParserStimulus, PackageParserState>()
-subPacketLength15State.action = (incomingState, _next) => {}
+subPacketLength15State.action = (incomingState, next) => {
+  // For now just drop the 15 bits and go back to start
+  incomingState.input.splice(0, 15)
+
+  next(incomingState, PackageParserStimulus.Version)
+}
 
 const endState = new State<PackageParserStimulus, PackageParserState>()
-endState.action = (incomingState, _next) => {}
+endState.action = (incomingState, next) => {
+  console.log("And we're done!")
+}
 
 export const buildStateMachine = (): StateMachine<PackageParserStimulus, PackageParserState> => {
   const stateMachine = new StateMachine<PackageParserStimulus, PackageParserState>(versionState)
@@ -142,7 +153,6 @@ export const buildStateMachine = (): StateMachine<PackageParserStimulus, Package
 
   return stateMachine
 }
-// input.split('').map(it=> parseInt(it, 16).toString(2)).join('')
 
 export const toBinaryRepresentation = (input: string): string[] =>
   input
@@ -150,4 +160,11 @@ export const toBinaryRepresentation = (input: string): string[] =>
     .map(hex => new String(parseInt(hex, 16).toString(2)).padStart(4, '0').split(''))
     .flat()
 
+const sumOfVersions = (result: PackageParserState) => result.packages.reduce((sum, packet) => sum + packet.version, 0)
+
 const data = fs.readFileSync('./src/16/data/data.txt').toString()
+const machine = buildStateMachine()
+const state = { packages: new Array<Package>(), input: toBinaryRepresentation(data) }
+
+machine.run(state)
+console.log('The sum of the packet versions is:', sumOfVersions(state))
