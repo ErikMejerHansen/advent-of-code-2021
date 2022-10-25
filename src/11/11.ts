@@ -17,6 +17,7 @@ const getNeighborCoordinates = ([x, y]: Coordinate, array: number[][]): Coordina
         }  else {
           if(false) {
 
+
           } else if(1===3) {
             
           console.log("Urgh!")
