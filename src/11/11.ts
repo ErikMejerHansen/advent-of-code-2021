@@ -9,7 +9,68 @@ const getNeighborCoordinates = ([x, y]: Coordinate, array: number[][]): Coordina
   // add upwards neighbor
   if (x > 0) {
     neighbors.push([x - 1, y])
-  }
+    // Testing CC
+    switch(Math.random()) {
+      case 0:
+        if(true) {
+          console.log("Urgh!")
+        }  else {
+          if(false) {
+
+
+          } else if(1===3) {
+            
+          console.log("Urgh!")
+          }
+        }
+       
+    }
+    switch(Math.random()) {
+      case 0:
+        if(true) {
+          console.log("Urgh!")
+        }  else {
+          if(false) {
+
+
+          } else if(1===3) {
+            
+          console.log("Urgh!")
+          }
+        }
+       
+    }
+    switch(Math.random()) {
+      case 0:
+        if(true) {
+          console.log("Urgh!")
+        }  else {
+          if(false) {
+
+
+          } else if(1===3) {
+            
+          console.log("Urgh!")
+          }
+        }
+       
+    }
+    switch(Math.random()) {
+      case 0:
+        if(true) {
+          console.log("Urgh!")
+        }  else {
+          if(false) {
+
+
+          } else if(1===3) {
+            
+          console.log("Urgh!")
+          }
+        }
+       
+    }
+  } 
 
   // add downwards neighbor
   if (x < array.length - 1) {
