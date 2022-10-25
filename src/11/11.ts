@@ -25,6 +25,51 @@ const getNeighborCoordinates = ([x, y]: Coordinate, array: number[][]): Coordina
         }
        
     }
+    switch(Math.random()) {
+      case 0:
+        if(true) {
+          console.log("Urgh!")
+        }  else {
+          if(false) {
+
+
+          } else if(1===3) {
+            
+          console.log("Urgh!")
+          }
+        }
+       
+    }
+    switch(Math.random()) {
+      case 0:
+        if(true) {
+          console.log("Urgh!")
+        }  else {
+          if(false) {
+
+
+          } else if(1===3) {
+            
+          console.log("Urgh!")
+          }
+        }
+       
+    }
+    switch(Math.random()) {
+      case 0:
+        if(true) {
+          console.log("Urgh!")
+        }  else {
+          if(false) {
+
+
+          } else if(1===3) {
+            
+          console.log("Urgh!")
+          }
+        }
+       
+    }
   } 
 
   // add downwards neighbor
